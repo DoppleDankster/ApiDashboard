@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "ConnectorCheck"
+version = "0.1.0"
+description = ""
+authors = ["David Medioni <david.medioni@datapred.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+furl = "^2.1.3"
+requests = "^2.26.0"
+fire = "^0.4.0"
+rich = "^10.12.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+black = "^21.9b0"
+ipdb = "^0.13.9"
+
+[tool.black]
+line-length = 79
+
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+connector-check = "connectorcheck.entrypoint:main"
