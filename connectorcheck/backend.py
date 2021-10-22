@@ -1,4 +1,4 @@
-from typing import Sequence, Dict, List
+from typing import Sequence, Dict, List, Optional
 from datetime import date, timedelta, datetime
 from requests import get
 from requests.auth import HTTPBasicAuth
@@ -79,7 +79,7 @@ class Backend:
 
     def get_instrument_last_raw_data(
         self, data_provider_id: int, instrument_id: int
-    ) -> Dict:
+    ) -> Optional[Dict]:
         """
         Get the latest raw data from an instrument
 
@@ -94,7 +94,11 @@ class Backend:
             f"/procurement/data-providers/{data_provider_id}"
             f"/instruments/{instrument_id}/data"
         )
-        params = {"format": "json", "start_date": self.date_filter}
+        params = {
+            "format": "json",
+            "start_date": self.date_filter,
+            "min_samples": "-1",
+        }
         url = self.generate_url(endpoint=endpoint, params=params)
         response = self.generate_request(url=url).json()
         if len(response) > 0:
