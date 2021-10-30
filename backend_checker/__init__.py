@@ -2,9 +2,9 @@ __version__ = "0.1.0"
 from typing import Dict, Optional, Sequence
 
 from backend_checker.dataclass import DataProvider, Instrument
-from .backend import Backend, BackendError
+from .services.backend import Backend, BackendError
 from .display import Displayer
-from .slack import Slack
+from .services.slack import Slack
 
 
 class BackendChecker:

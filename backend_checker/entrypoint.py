@@ -1,6 +1,6 @@
 from fire import Fire
-from backend_checker.backend import BackendError, Backend
-from backend_checker.slack import Slack
+from backend_checker.services.backend import BackendError, Backend
+from backend_checker.services.slack import Slack
 from backend_checker.display import Displayer
 from backend_checker import Checker
 
