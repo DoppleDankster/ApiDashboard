@@ -1,8 +1,8 @@
 from fire import Fire
-from connectorcheck.backend import BackendError, Backend
-from connectorcheck.slack import Slack
-from connectorcheck.display import Displayer
-from connectorcheck import Checker
+from backend_checker.backend import BackendError, Backend
+from backend_checker.slack import Slack
+from backend_checker.display import Displayer
+from backend_checker import Checker
 
 
 def check(

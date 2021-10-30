@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "ConnectorCheck"
+name = "BackendChecker"
 version = "0.1.0"
 description = ""
 authors = ["David Medioni <david.medioni@datapred.com>"]
@@ -25,4 +25,4 @@ requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.poetry.scripts]
-connector-check = "connectorcheck.entrypoint:main"
+backend-check = "backend_check.entrypoint:main"

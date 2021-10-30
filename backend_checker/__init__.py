@@ -1,13 +1,13 @@
 __version__ = "0.1.0"
 from typing import Dict, Optional, Sequence
 
-from connectorcheck.dataclass import DataProvider, Instrument
+from backend_checker.dataclass import DataProvider, Instrument
 from .backend import Backend, BackendError
 from .display import Displayer
 from .slack import Slack
 
 
-class Checker:
+class BackendChecker:
     def __init__(
         self,
         backend: Backend,
