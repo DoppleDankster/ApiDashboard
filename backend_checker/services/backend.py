@@ -1,10 +1,10 @@
-from typing import Sequence, Dict, List, Optional
-from datetime import date, timedelta, datetime
+#!/usr/bin/env python3
+
+from typing import Sequence, Dict
 from requests import get
 from requests.auth import HTTPBasicAuth
 from requests.exceptions import HTTPError, ConnectionError
 from furl import furl
-from .dataclass import DataProvider, Instrument
 
 
 class Backend:
@@ -26,84 +26,106 @@ class Backend:
         """
         self.base_url = furl(base_url)
         self.auth = HTTPBasicAuth(username=username, password=password)
-        self.date_filter = self.generate_date_filter()
 
-    def get_data_providers(self) -> Sequence[DataProvider]:
+    def get_data_providers(self) -> Sequence[Dict]:
         """
-        Get the list of data-providers from the api.
-
-        Returns:
-            []DataProviders: The list of DataProviders
+        Return the list of data providers as a JSON array.
         """
-        return_list = []
 
         endpoint = "/procurement/data-providers/"
         params = {"format": "json"}
         url = self.generate_url(endpoint=endpoint, params=params)
         response = self.generate_request(url=url).json()
-        providers = response["results"]
-        for provider in providers:
-            id = provider["id"]
-            instruments = self.get_intruments(id)
-            return_list.append(
-                DataProvider(**provider, instruments=instruments)
-            )
-        return return_list
+        return response["results"]
 
-    def get_intruments(self, data_provider_id: int) -> Sequence[Instrument]:
+    def get_data_provider(self, provider_id: int) -> Dict:
         """
-        Get the list of instrument from a given data provider.
-
-        Args:
-            data_provider_id(int): The id of the data provider
-
-        Returns:
-            []Instruments : An array of Instruments
+        Return a data provider in JSON format
         """
-        return_list = []
-        endpoint = (
-            f"/procurement/data-providers/{data_provider_id}/instruments/"
-        )
+        endpoint = f"/procurement/data-providers/{provider_id}/"
+        params = {"format": "json"}
+        url = self.generate_url(endpoint=endpoint, params=params)
+        return self.generate_request(url=url).json()
+
+    def get_data_provider_instruments(
+        self, provider_id: int
+    ) -> Sequence[Dict]:
+        """
+        Return the list of instruments from a data provider as a JSON array
+        """
+        endpoint = f"/procurement/data-providers/{provider_id}/instruments/"
         params = {"format": "json"}
         url = self.generate_url(endpoint=endpoint, params=params)
         response = self.generate_request(url=url).json()
-        for instrument in response["results"]:
-            instrument_id = instrument["id"]
-            last_raw_data = self.get_instrument_last_raw_data(
-                data_provider_id, instrument_id
-            )
-            return_list.append(
-                Instrument(**instrument, last_raw_data=last_raw_data)
-            )
-        return return_list
+        return response["results"]
 
-    def get_instrument_last_raw_data(
-        self, data_provider_id: int, instrument_id: int
-    ) -> Optional[Dict]:
+    def get_instrument(self, provider_id: int, instrument_id: int) -> Dict:
         """
-        Get the latest raw data from an instrument
-
-        Args:
-            data_provider_id(int): The id of the data provider
-            intrument_ud(int): The id of the instrument
-
-        Returns:
-            (dict): The latest raw_data entry
+        Return a data provider instrument in JSON format
         """
+        endpoint = f"/procurement/data-providers/{provider_id}/instruments/{instrument_id}"
+        params = {"format": "json"}
+        url = self.generate_url(endpoint=endpoint, params=params)
+        return self.generate_request(url=url).json()
+
+    def get_instrument_raw_data(
+        self, provider_id: int, instrument_id: int, start_date: str
+    ) -> Sequence[Dict]:
+        """
+        Return the raw data from an instrument as a JSON array
+        """
+
         endpoint = (
-            f"/procurement/data-providers/{data_provider_id}"
+            f"/procurement/data-providers/{provider_id}"
             f"/instruments/{instrument_id}/data"
         )
         params = {
             "format": "json",
-            "start_date": self.date_filter,
+            "start_date": start_date,
             "min_samples": "-1",
         }
         url = self.generate_url(endpoint=endpoint, params=params)
         response = self.generate_request(url=url).json()
-        if len(response) > 0:
-            return response[-1]
-        return None
+        return response["results"]
+
+    def get_flows(self) -> Sequence[Dict]:
+        """
+        Return the list of flows as a JSON array.
+        """
+        endpoint = "/procurement/flows/"
+        params = {"format": "json"}
+        url = self.generate_url(endpoint=endpoint, params=params)
+        response = self.generate_request(url=url).json()
+        return response["results"]
+
+    def get_flow(self, flow_id: int) -> Dict:
+        """
+        Return a flow in JSON format
+        """
+        endpoint = f"/procurement/flows/{flow_id}/"
+        params = {"format": "json"}
+        url = self.generate_url(endpoint=endpoint, params=params)
+        return self.generate_request(url=url).json()
+
+    def get_commodities(self) -> Sequence[Dict]:
+        """
+        Return the list of commodities as a JSON array.
+        """
+        endpoint = "/procurement/commodities/"
+        params = {"format": "json"}
+        url = self.generate_url(endpoint=endpoint, params=params)
+        response = self.generate_request(url=url).json()
+        return response["results"]
+
+    def get_commodity(self, commodity_id: int) -> Dict:
+        """
+        Return a commodity in JSON format
+        """
+        endpoint = f"/procurement/commodities/{commodity_id}/"
+        params = {"format": "json"}
+        url = self.generate_url(endpoint=endpoint, params=params)
+        response = self.generate_request(url=url).json()
+        return response["results"]
 
     def generate_url(self, endpoint: str, params: dict) -> furl:
         """
@@ -145,12 +167,6 @@ class Backend:
                 status_code=response.status_code,
                 message=response.text,
             )
-
-    @staticmethod
-    def generate_date_filter():
-        today = date.today()
-        yesterday = today - timedelta(days=1)
-        return yesterday
 
 
 class BackendError(Exception):

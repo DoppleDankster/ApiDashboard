@@ -1,7 +1,5 @@
 from typing import Dict, List
 from requests import post
-from requests.exceptions import HTTPError, ConnectionError
-from .dataclass import Instrument, DataProvider
 
 
 class Slack:
