@@ -9,3 +9,4 @@ build
 htmlcov
 
 .python-version
+.mypy_cache/
